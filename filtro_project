@@ -1,0 +1,95 @@
+#include "dht.h"
+
+int cooler_1 = 5;
+int cooler_2 = 6;
+int UV_1 = 9;
+int UV_2 = 10;
+int valve_1 = 7;
+int valve_2 = 8;
+int gas_sensor = A0;
+int th_sensor = A1;
+int touch = 4;
+dht DHT;
+unsigned int valor;
+byte estado = 0; 
+byte guarda_estado = 0;  
+byte estado_anterior = LOW;
+
+void setup() {
+  // put your setup code here, to run once:
+pinMode(cooler_1, OUTPUT);
+pinMode(cooler_2, OUTPUT);
+pinMode(UV_1, OUTPUT);
+pinMode(UV_2, OUTPUT);
+pinMode(valve_1, OUTPUT);
+pinMode(valve_2, OUTPUT);
+pinMode(gas_sensor, INPUT);
+pinMode(th_sensor, INPUT):
+pinMode(touch, INPUT);
+
+Serial.begin(9600);
+Serial.println("Desinfection sequence initiated");
+
+Serial.Write(201);   
+Serial.Write(HighByte(Contador));  
+Serial.Write(LowByte(Contador));
+}
+
+void filter(){
+digitalWrite(cooler_1, HIGH);
+digitalWrite(valve_1,HIGH);
+digitalWrite(cooler_2, LOW);
+digitalWrite(valve_2,LOW);
+digitalWrite(UV_1,LOW);
+digitalWrite(UV_2,LOW);
+delay(6000);
+
+digitalWrite(cooler_1, LOW);
+digitalWrite(valve_1,LOW);
+digitalWrite(UV_1,HIGH);
+digitalWrite(UV_2,HIGH);
+delay(50000)
+
+digitalWrite(UV_1,LOW);
+digitalWrite(UV_2,LOW);
+digitalWrite(cooler_2, HIGH);
+digitalWrite(valve_2,HIGH);
+DHT.read11(th_sensor);
+int qualidade = analogRead(th_sensor):
+delay(7000);
+
+
+}
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+estado = digitalRead(touch);
+if ((estado) && (!estado_anterior)){
+guarda_estado = !guarda_estado;
+delay(10);
+  }
+
+if (guarda_estado == HIGH) {
+for (int i = 0; i < 43; i++) {
+filter();
+Serial.Write(201);   
+Serial.Write(HighByte(qualidade));  
+Serial.Write(LowByte(qualidade));
+Serial.Write(202);   
+Serial.Write(HighByte(DHT.humidity));  
+Serial.Write(LowByte(DHT.humidity));
+Serial.Write(203);   
+Serial.Write(HighByte(DHT.temperature,0));  
+Serial.Write(LowByte(DHT.temperature,0));
+}
+
+digitalWrite(cooler_1, HIGH);
+digitalWrite(valve_1,HIGH);
+digitalWrite(cooler_2, HIGH);
+digitalWrite(valve_2, HIGH);
+digitalWrite(UV_1, LOW);
+digitalWrite(UV_2, LOW);
+delay(900000):
+}
+}
